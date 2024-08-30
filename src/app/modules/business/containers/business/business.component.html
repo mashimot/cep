@@ -1,0 +1,21 @@
+<section>
+    <h1>Polos Itáu</h1>
+    <p>Confira abaixo alguns dos principais polos do Itáu</p>
+</section>
+
+<section>
+    <ng-container *ngIf="(businesses$ | async) as businesses; else loading">
+        <app-business-list
+            [businesses]="businesses"
+            (createBusiness)="onCreateBusiness()"
+            (detailBusiness)="onDetailBusinessChange($event)"
+            (saveBusiness)="onSaveBusinessChange($event)"
+            (deleteBusiness)="onDeleteBusinessChange($event)"
+            (searchBusiness)="onSearchBusinessChange($event)"
+        ></app-business-list>
+    </ng-container>
+</section>
+
+<ng-template #loading>
+    <h1>LOADING...</h1>
+</ng-template>

@@ -1,0 +1,12 @@
+<ng-container *ngIf="(business$ | async) as business">
+    <section>
+        <h1>Polo {{ business?.name }}</h1>
+        <p>exibindo detalhes do business {{ business?.name }}#{{ business?.id }}</p>
+    </section>
+    <app-business-form
+        [showSubmitButton]="false"
+        [business]="business"
+        (formBackButtonChange)="onFormBackButtonChange()"
+    ></app-business-form>
+</ng-container>
+
