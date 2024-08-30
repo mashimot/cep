@@ -163,6 +163,8 @@ export class CepFormComponent implements OnInit, OnChanges {
                     .getCep(cepNumber)
                     .pipe(
                         catchError(errors => {
+                            this.cepChange.emit(null);
+                            
                             if (errors?.name === 'CepPromiseError') {
                                 const message = errors?.errors?.[0];
                                 
@@ -180,6 +182,7 @@ export class CepFormComponent implements OnInit, OnChanges {
                                     tap(() => {
                                         this.cepFormControl.setErrors({ apiCep: message});
                                         this.cepFormControl.markAsTouched({ onlySelf: true });
+                                        // this.cepFormControl.updateValueAndValidity();
                                     })
                                 )
                             }
