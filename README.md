@@ -1,15 +1,17 @@
 # Itau
 
-Node v18.19.1
-Angular v16
-SCSS
-Jest
+Node v18.19.1\
+Angular v16\
+SCSS\
+Jest\
 
-Run `npm install`
-Run `ng serve`
+# Install 
+
+Run `npm install`\
+Run `ng serve`\
 
 # Teste Unitário
-Run `npm test -- --coverage`  (80%+ Coverage)
+Run `npm test -- --coverage` (80%+ Coverage)
 
 # VERCEL
 https://cep-six.vercel.app/
