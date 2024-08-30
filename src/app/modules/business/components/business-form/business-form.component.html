@@ -1,4 +1,11 @@
-<!-- <pre>{{ businessFormGroup?.value | json }}</pre> -->
+
+<ng-container *ngIf="business?.id">
+    <section>
+        <h1>Polo {{ business?.name }}</h1>
+        <p>exibindo detalhes do polo {{ business?.name }}#{{ business?.id }}</p>
+    </section>
+</ng-container>
+
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div [formGroupName]="'business'">
         <section>

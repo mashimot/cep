@@ -1,11 +1,3 @@
-
-<ng-container *ngIf="(business$ | async) as business">
-    <section>
-        <h1>Polo {{ business?.name }}</h1>
-        <p>exibindo detalhes do polo {{ business?.name }}#{{ business?.id }}</p>
-    </section>
-</ng-container>
-
 <app-business-form
     [business]="business$ | async"
     (saveBusiness)="onSaveBusinessFormChange($event)"
