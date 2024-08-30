@@ -3,12 +3,12 @@
 Node v18.19.1\
 Angular v16\
 SCSS\
-Jest\
+Jest
 
 # Install 
 
 Run `npm install`\
-Run `ng serve`\
+Run `ng serve`
 
 # Teste Unitário
 Run `npm test -- --coverage` (80%+ Coverage)
