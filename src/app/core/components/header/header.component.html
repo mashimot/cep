@@ -10,15 +10,20 @@
 
         <div class="divider"></div>
 
-        <div class="user-avatar">
-
-        </div>
-        <div class="user-info">
-            <button mat-button [matMenuTriggerFor]="profileMenu">
-                <span class="user-name" fxLayoutAlign="start">John Doe</span>
-                <span class="user-role" fxLayoutAlign="start">Diretor Itaú BBA</span>
-            </button>
-        </div>
+        <button mat-button [matMenuTriggerFor]="profileMenu">
+            <div class="dropdown-container">
+                <div class="dropdown-trigger">
+                    <div class="circle"></div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Diretor Itaú BBA</span>
+                    </div>
+                    <div class="caret">
+                        <i class="fa-solid fa-angle-down"></i>
+                    </div>
+                </div>
+            </div>
+        </button>
     </div>
 
     <mat-menu #profileMenu="matMenu">
@@ -33,3 +38,7 @@
         </ng-container>
     </mat-menu>
 </header>
+
+
+
+
