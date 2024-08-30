@@ -1,0 +1,86 @@
+
+<section class="header">
+	<div fxLayout="row" fxFlex fxLayoutAlign="end" fxLayoutGap="10px">
+		<button mat-icon-button (click)="create()">
+			<i class="fa-regular fa-plus fa-lg"></i>
+		</button>
+		<mat-form-field>
+			<mat-label>Pesquisar...</mat-label>
+			<input matInput placeholder="Pesquisar..." [formControl]="searchFormControl"/>
+		</mat-form-field>
+	</div>
+</section>
+
+<div *ngIf="businesses" class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+		<!-- Name Column -->
+		<ng-container matColumnDef="name">
+			<th mat-header-cell *matHeaderCellDef>Nome</th>
+			<td mat-cell *matCellDef="let element">{{ element.name }}</td>
+		</ng-container>
+	
+		<!-- Business Column -->
+		<ng-container matColumnDef="business">
+			<th mat-header-cell *matHeaderCellDef>Business</th>
+			<td mat-cell *matCellDef="let element">{{ element.business }}</td>
+		</ng-container>
+	
+		<!-- Valuation Column -->
+		<ng-container matColumnDef="valuation">
+			<th mat-header-cell *matHeaderCellDef>Valuation</th>
+			<td mat-cell *matCellDef="let element">
+				<span *ngIf="(currencyLanguage$ | async) as currencyLanguage">
+					{{ element.valuation | currency : currencyLanguage }}
+				</span>
+			</td>
+		</ng-container>
+	
+		<!-- Active Column -->
+		<ng-container matColumnDef="active">
+			<th mat-header-cell *matHeaderCellDef>
+				<p class="text-align-center">Situação</p>
+			</th>
+			<td mat-cell *matCellDef="let element">
+				<div class="text-align-center">
+					<i 
+						class="fa-solid fa-circle fa-2xs"
+						[ngStyle]="{
+							'color': element.active === true ? 'rgb(108, 245, 113)' : 'rgb(255, 117, 115)',
+						}"
+					></i>
+				</div>
+			</td>
+		</ng-container>
+	
+		<!-- Ação Column -->
+		<ng-container matColumnDef="action">
+			<th mat-header-cell *matHeaderCellDef>
+				<p class="text-align-center">Ação</p>
+			</th>
+			<td mat-cell *matCellDef="let element">
+				<div class="text-align-center">
+					<button mat-icon-button (click)="detail(element)">
+						<i class="fa-regular fa-eye"></i>
+					</button>
+					<button mat-icon-button (click)="update(element)">
+						<i class="fa-regular fa-pen-to-square"></i>
+					</button>
+					<button mat-icon-button (click)="delete(element)">
+						<i class="fa-regular fa-trash-can"></i>
+					</button>
+				</div>
+			</td>
+		</ng-container>
+	
+		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+    <mat-paginator
+		[pageSizeOptions]="[5, 10, 20]"
+		showFirstLastButtons
+		aria-label="Select page of periodic elements"
+    >
+    </mat-paginator>
+</div>
+  
