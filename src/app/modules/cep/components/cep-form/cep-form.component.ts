@@ -164,10 +164,11 @@ export class CepFormComponent implements OnInit, OnChanges {
                     .pipe(
                         catchError(errors => {
                             this.cepChange.emit(null);
-                            
+
                             if (errors?.name === 'CepPromiseError') {
-                                const message = errors?.errors?.[0];
-                                
+                                const error = errors?.errors?.[0];
+                                const message = error?.message;
+
                                 return of(null).pipe(
                                     tap(response => {
                                         this.snackBar.open(
@@ -180,7 +181,7 @@ export class CepFormComponent implements OnInit, OnChanges {
                                         );
                                     }),
                                     tap(() => {
-                                        this.cepFormControl.setErrors({ apiCep: message});
+                                        this.cepFormControl.setErrors({ apiCep: message });
                                         this.cepFormControl.markAsTouched({ onlySelf: true });
                                         // this.cepFormControl.updateValueAndValidity();
                                     })
