@@ -1,15 +1,16 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BusinessFormComponent } from './business-form.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { NgxMaskDirective, NgxMaskPipe, provideEnvironmentNgxMask } from 'ngx-mask';
 import { of } from 'rxjs';
+import { CepDirective } from '../../../../modules/cep/directives/cep/cep.directive';
 import { LanguageService } from '../../../../shared/services/languages/language.service';
 import { LoadingService } from '../../../../shared/services/loading/loading.service';
-import { IBusiness } from '../../interfaces/business.interface';
 import { CepFormComponent } from '../../../cep/components/cep-form/cep-form.component';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { NgxMaskDirective, NgxMaskPipe, provideEnvironmentNgxMask } from 'ngx-mask';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { IBusiness } from '../../interfaces/business.interface';
+import { BusinessFormComponent } from './business-form.component';
 
 describe('BusinessFormComponent', () => {
   let component: BusinessFormComponent;
@@ -31,7 +32,8 @@ describe('BusinessFormComponent', () => {
         NgxMaskDirective,
         NgxMaskPipe,
         ReactiveFormsModule,
-        CepFormComponent
+        CepFormComponent,
+        CepDirective
       ],
       declarations: [],
       providers: [
@@ -89,7 +91,7 @@ describe('BusinessFormComponent', () => {
     });
 
     expect(component.f.invalid).toBeTruthy();
-    expect(component.businessFormGroup.value).toEqual({
+    expect(component.f.value).toEqual({
       id: 999999,
       name: 'Test Business',
       business: 'Tech',
@@ -111,7 +113,7 @@ describe('BusinessFormComponent', () => {
 
     component.business = null;
     component.buildForm();
-    component.businessFormGroup.setValue({
+    component.f.setValue({
       id: null,
       name: 'Test Business',
       business: 'Tech',
@@ -128,7 +130,7 @@ describe('BusinessFormComponent', () => {
     });
 
     component.onSubmit();
-
+    
     expect(component.f.valid).toBeTruthy();
     expect(component.createBusiness.emit).toHaveBeenCalledWith({
       id: null,
@@ -161,9 +163,10 @@ describe('BusinessFormComponent', () => {
       cep: '12345-678'
     };
 
-    component.buildForm();
-    component.businessFormGroup.patchValue(mockBusiness);
+    component.form = component.buildForm();
+    component.locationCep.setValue(mockBusiness.cep);
     component.onCepChange(mockCep);
+    component.f.patchValue(mockBusiness);
 
     component.onSubmit();
 
@@ -180,15 +183,15 @@ describe('BusinessFormComponent', () => {
   });
 
   it('should disable location fields when onStateCepChange is true', () => {
-    component.buildForm();
+    component.form = component.buildForm();
     component.onStateCepChange(true);
-    expect(component.businessLocation.disabled).toBeTruthy();
+    expect(component.location.disabled).toBeTruthy();
   });
 
   it('should enable location fields when onStateCepChange is false', () => {
-    component.buildForm();
+    component.form = component.buildForm();
     component.onStateCepChange(false);
-    expect(component.businessLocation.enabled).toBeTruthy();
+    expect(component.location.enabled).toBeTruthy();
   });
 
   it('should reset location fields on onCepChange and patch values when CEP is provided', () => {
@@ -200,16 +203,17 @@ describe('BusinessFormComponent', () => {
       neighborhood: 'Bela Vista'
     };
 
-    component.buildForm();
+    component.form = component.buildForm();
+    component.locationCep.setValue(mockCep.cep);
     component.onCepChange(mockCep);
 
-    expect(component.businessLocation.value).toEqual(mockCep);
+    expect(component.location.value).toEqual(mockCep);
   });
 
   it('should call validateAllFormFields when form is invalid on submit', () => {
     jest.spyOn(component, 'validateAllFormFields');
 
-    component.buildForm();
+    component.form = component.buildForm();
     component.onSubmit();
 
     expect(component.validateAllFormFields).toHaveBeenCalled();

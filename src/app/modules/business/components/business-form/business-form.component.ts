@@ -27,6 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { Observable, of } from 'rxjs';
+import { CepDirective } from '../../../../modules/cep/directives/cep/cep.directive';
 import { CepFormComponent } from '../../../../modules/cep/components/cep-form/cep-form.component';
 import { ICep } from '../../../../modules/cep/interfaces/cep.interface';
 import { LanguageService } from '../../../../shared/services/languages/language.service';
@@ -39,7 +40,7 @@ import { IBusiness } from '../../interfaces/business.interface';
     styleUrls: ['./business-form.component.scss'],
     standalone: true,
     imports: [
-        CepFormComponent,
+        // CepFormComponent,
         CommonModule,
         NgIf,
         AsyncPipe,
@@ -52,13 +53,14 @@ import { IBusiness } from '../../interfaces/business.interface';
         MatProgressSpinnerModule,
         FlexLayoutModule,
         NgxMaskDirective,
-        NgxMaskPipe
+        NgxMaskPipe,
+        CepDirective
     ]
 })
 export class BusinessFormComponent implements OnInit, OnChanges {
     @Input() public business?: IBusiness | null;
     @Input() public showSubmitButton?: boolean = true;
-    
+
     @Output() public saveBusiness: EventEmitter<IBusiness> = new EventEmitter();
     @Output() public createBusiness: EventEmitter<IBusiness> = new EventEmitter();
     @Output() public formBackButtonChange: EventEmitter<void> = new EventEmitter();
@@ -90,65 +92,69 @@ export class BusinessFormComponent implements OnInit, OnChanges {
 
     public buildForm(): FormGroup {
         return this.formBuilder.group({
-            "business": this.formBuilder.group({
-                "id": ['', []],
-                "name": ['', [Validators.required]],
-                "business": ['', [Validators.required]],
-                "valuation": ['', [Validators.required]],
-                "active": ['', [Validators.required]],
-                "cnpj": ['', [Validators.required]],
-                "location": this.formBuilder.group({
-                    "cep": ['', [Validators.required]],
-                    "state": ['', [Validators.required]],
-                    "city": ['', [Validators.required]],
-                    "street": ['', [Validators.required]],
-                    "neighborhood": ['', [Validators.required]],
-                }),
+            "id": ['', []],
+            "name": ['', [Validators.required]],
+            "business": ['', [Validators.required]],
+            "valuation": ['', [Validators.required]],
+            "active": ['', [Validators.required]],
+            "cnpj": ['', [Validators.required]],
+            "location": this.formBuilder.group({
+                "cep": ['', [Validators.required]],
+                "state": ['', [Validators.required]],
+                "city": ['', [Validators.required]],
+                "street": ['', [Validators.required]],
+                "neighborhood": ['', [Validators.required]],
             }),
         });
     }
 
     public displayBusiness(business: IBusiness): void {
-        this.businessFormGroup.reset();
-        this.businessFormGroup.patchValue(business);
-        this.businessLocationCep.setValue(business.cep);
+        this.f.reset();
+        this.f.patchValue(business);
+        this.locationCep.setValue(business.cep);
     }
 
     onStateCepChange($event: boolean): void {
         this.state = $event;
         if ($event === true) {
-            this.businessLocation.disable();
+            this.location.disable();
         } else {
-            this.businessLocation.enable();
+            this.location.enable();
         }
     }
 
     onCepChange($event: ICep | null): void {
-        this.businessLocation.reset();
+        ['state', 'city', 'street', 'neighborhood'].forEach(value => {
+            this.location.get(value)?.reset();
+        });
+
         if ($event) {
-            this.businessLocation.patchValue({
-                "cep": $event.cep,
+            this.location.patchValue({
+                // "cep": $event.cep,
                 "state": $event.state,
                 "city": $event.city,
                 "street": $event.street,
                 "neighborhood": $event.neighborhood
+            }, {
+                emitEvent: false,
+                onlySelf: true
             });
         }
     }
 
     onSubmit(): void {
         if (this.f.valid) {
-            const business = { ...this.businessFormGroup.value };
+            const business = { ...this.f.value };
             business.cep = business.location.cep;
 
             delete business['location'];
 
-            if (!this.business && !this.businessId.value) {
+            if (!this.business && !this.id.value) {
                 this.createBusiness.emit(business);
             } else {
                 this.saveBusiness.emit({
                     ...business,
-                    id: this.businessId.value
+                    id: this.id.value
                 });
             }
         } else {
@@ -208,43 +214,37 @@ export class BusinessFormComponent implements OnInit, OnChanges {
     get f(): FormGroup {
         return this.form as FormGroup;
     }
-    get businessFormGroup(): FormGroup {
-        return this.f.get(['business']) as FormGroup;
+    get id(): FormControl {
+        return this.f.get(['id']) as FormControl;
     }
-    get businessId(): FormControl {
-        return this.f.get(['business', 'id']) as FormControl;
+    get name(): FormControl {
+        return this.f.get(['name']) as FormControl;
     }
-    get businessName(): FormControl {
-        return this.f.get(['business', 'name']) as FormControl;
+    get valuation(): FormControl {
+        return this.f.get(['valuation']) as FormControl;
     }
-    get businessBusiness(): FormControl {
-        return this.f.get(['business', 'business']) as FormControl;
+    get active(): FormControl {
+        return this.f.get(['active']) as FormControl;
     }
-    get businessValuation(): FormControl {
-        return this.f.get(['business', 'valuation']) as FormControl;
+    get cnpj(): FormControl {
+        return this.f.get(['cnpj']) as FormControl;
     }
-    get businessActive(): FormControl {
-        return this.f.get(['business', 'active']) as FormControl;
+    get location(): FormGroup {
+        return this.f.get(['location']) as FormGroup;
     }
-    get businessCnpj(): FormControl {
-        return this.f.get(['business', 'cnpj']) as FormControl;
+    get locationCep(): FormControl {
+        return this.f.get(['location', 'cep']) as FormControl;
     }
-    get businessLocation(): FormGroup {
-        return this.f.get(['business', 'location']) as FormGroup;
+    get locationState(): FormControl {
+        return this.f.get(['location', 'state']) as FormControl;
     }
-    get businessLocationCep(): FormControl {
-        return this.f.get(['business', 'location', 'cep']) as FormControl;
+    get locationCity(): FormControl {
+        return this.f.get(['location', 'city']) as FormControl;
     }
-    get businessLocationState(): FormControl {
-        return this.f.get(['business', 'location', 'state']) as FormControl;
+    get locationStreet(): FormControl {
+        return this.f.get(['location', 'street']) as FormControl;
     }
-    get businessLocationCity(): FormControl {
-        return this.f.get(['business', 'location', 'city']) as FormControl;
-    }
-    get businessLocationStreet(): FormControl {
-        return this.f.get(['business', 'location', 'street']) as FormControl;
-    }
-    get businessLocationNeighborhood(): FormControl {
-        return this.f.get(['business', 'location', 'neighborhood']) as FormControl;
+    get locationNeighborhood(): FormControl {
+        return this.f.get(['location', 'neighborhood']) as FormControl;
     }
 }

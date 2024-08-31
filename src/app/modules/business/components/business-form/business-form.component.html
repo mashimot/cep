@@ -7,122 +7,145 @@
 </ng-container>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div [formGroupName]="'business'">
-        <section>
-            <h5>Detalhes do Endereço</h5>
-      
-            <div [formGroupName]="'location'">
-                <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="15px grid">
-                    <app-cep 
-                        (cepChange)="onCepChange($event)"
-                        [cepNumber]="businessLocationCep.value"
-                        (state)="onStateCepChange($event)"
-                    ></app-cep>
-               
-                    <mat-form-field
-                        *ngIf="getField(['business', 'location', 'street']) as field"
-                        fxFlex="35"
-                        fxFlex.xs="100"
-                    >
-                        <mat-label>Nome da Rua</mat-label>
-                        <input matInput placeholder="Nome da Rua" [formControlName]="'street'" />
-                        <mat-error *ngIf="field.isFieldValid">
-                            <span *ngIf="field.abstractControl!.hasError('required')">
-                                Nome da Rua is required
-                            </span>
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field
-                        *ngIf="getField(['business', 'location', 'neighborhood']) as field"
-                        fxFlex="15"
-                        fxFlex.xs="100"
-                    >
-                        <mat-label>Bairro</mat-label>
-                        <input matInput placeholder="Bairro" [formControlName]="'neighborhood'" />
-                        <mat-error *ngIf="field.isFieldValid">
-                            <span *ngIf="field.abstractControl!.hasError('required')">Bairro is required</span>
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field
-                        *ngIf="getField(['business', 'location', 'state']) as field"
-                        fxFlex="15"
-                        fxFlex.xs="100"
-                    >
-                        <mat-label>Estado</mat-label>
-                        <input matInput placeholder="Estado" [formControlName]="'state'" />
-                        <mat-error *ngIf="field.isFieldValid">
-                            <span *ngIf="field.abstractControl!.hasError('required')">
-                                Estado is required
-                            </span>
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field
-                        *ngIf="getField(['business', 'location', 'city']) as field"
-                        fxFlex="15"
-                        fxFlex.xs="100"   
-                    >
-                        <mat-label>Cidade</mat-label>
-                        <input matInput placeholder="Cidade" [formControlName]="'city'" />
-                        <mat-error *ngIf="field.isFieldValid">
-                            <span *ngIf="field.abstractControl!.hasError('required')">
-                                Cidade is required
-                            </span>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-            </div>
-        </section>
-        <section>
-            <h5>Detalhe da Empresa</h5>
+    <section>
+        <h5>Detalhes do Endereço</h5>
+    
+        <div [formGroupName]="'location'">
             <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="15px grid">
-                <mat-form-field *ngIf="getField(['business', 'name']) as field">
-                    <mat-label>Nome</mat-label>
-                    <input matInput placeholder="Nome" [formControlName]="'name'"  [attr.disabled]="'disabled'" />
+                <!-- <app-cep 
+                    (cepChange)="onCepChange($event)"
+                    [cepNumber]="locationCep.value"
+                    (state)="onStateCepChange($event)"
+                ></app-cep> -->
+
+                <mat-form-field
+                    *ngIf="getField(['location', 'cep']) as field"
+                    fxFlex="20"
+                    fxFlex.xs="100"
+                >
+                    <mat-label>CEP</mat-label>
+                    <input 
+                        [formControlName]="'cep'"
+                        matInput 
+                        mask="00000-000"
+                        cep
+                        (cepChange)="onCepChange($event)"
+                        placeholder="CEP" 
+                    />
+
+                    <mat-hint *ngIf="locationCep.pending">
+                        LOADING...
+                    </mat-hint> 
+
+                    <mat-error *ngIf="locationCep?.hasError('required')">CEP is required</mat-error>
+                    <mat-error *ngIf="locationCep?.hasError('apiCep')">{{ locationCep.errors?.['apiCep'] }}</mat-error>
+                    <mat-error *ngIf="locationCep?.hasError('minlength')">CEP min is {{ locationCep.errors?.['minlength']?.requiredLength }}</mat-error>
+                    <mat-error *ngIf="locationCep?.hasError('maxlength')">CEP max is {{ locationCep.errors?.['maxlength']?.requiredLength }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field
+                    *ngIf="getField(['location', 'street']) as field"
+                    fxFlex="35"
+                    fxFlex.xs="100"
+                >
+                    <mat-label>Nome da Rua</mat-label>
+                    <input matInput placeholder="Nome da Rua" [formControlName]="'street'" />
                     <mat-error *ngIf="field.isFieldValid">
                         <span *ngIf="field.abstractControl!.hasError('required')">
-                            Nome is required
+                            Nome da Rua is required
                         </span>
                     </mat-error>
                 </mat-form-field>
-                <mat-form-field *ngIf="getField(['business', 'business']) as field" fxFlex="15" fxFlex.xs="100">
-                    <mat-label>Business</mat-label>
-                    <input matInput placeholder="Business" [formControlName]="'business'" />
+                <mat-form-field
+                    *ngIf="getField(['location', 'neighborhood']) as field"
+                    fxFlex="15"
+                    fxFlex.xs="100"
+                >
+                    <mat-label>Bairro</mat-label>
+                    <input matInput placeholder="Bairro" [formControlName]="'neighborhood'" />
+                    <mat-error *ngIf="field.isFieldValid">
+                        <span *ngIf="field.abstractControl!.hasError('required')">Bairro is required</span>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field
+                    *ngIf="getField(['location', 'state']) as field"
+                    fxFlex="15"
+                    fxFlex.xs="100"
+                >
+                    <mat-label>Estado</mat-label>
+                    <input matInput placeholder="Estado" [formControlName]="'state'" />
                     <mat-error *ngIf="field.isFieldValid">
                         <span *ngIf="field.abstractControl!.hasError('required')">
-                            Business is required
+                            Estado is required
                         </span>
                     </mat-error>
                 </mat-form-field>
-                <mat-form-field *ngIf="getField(['business', 'valuation']) as field" fxFlex="15" fxFlex.xs="100">
-                    <mat-label>Valuation</mat-label>
-                    <input matInput mask="separator.2" thousandSeparator="," placeholder="Valuation" [formControlName]="'valuation'" />
-
-                    <span matPrefix>&nbsp;&nbsp;{{ currencySymbol$ | async }}</span >
-
+                <mat-form-field
+                    *ngIf="getField(['location', 'city']) as field"
+                    fxFlex="15"
+                    fxFlex.xs="100"   
+                >
+                    <mat-label>Cidade</mat-label>
+                    <input matInput placeholder="Cidade" [formControlName]="'city'" />
                     <mat-error *ngIf="field.isFieldValid">
-                        <span *ngIf="field.abstractControl!.hasError('required')">Valuation is required</span>
+                        <span *ngIf="field.abstractControl!.hasError('required')">
+                            Cidade is required
+                        </span>
                     </mat-error>
-                </mat-form-field>
-                <mat-form-field *ngIf="getField(['business', 'cnpj']) as field" fxFlex="15" fxFlex.xs="100">
-                    <mat-label>CNPJ</mat-label>
-                    <input matInput placeholder="CNPJ" mask="CPF_CNPJ" [formControlName]="'cnpj'" />
-                    <mat-error *ngIf="field.isFieldValid">
-                        <span *ngIf="field.abstractControl!.hasError('required')">CNPJ is required</span>
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field *ngIf="getField(['business', 'active']) as field" fxFlex="15" fxFlex.xs="100">
-                    <mat-label>Ativo?</mat-label>
-                    <mat-select [formControlName]="'active'">
-                        <ng-container *ngIf="(dominioYesOrNo$ | async) as yesOrNo">
-                            <mat-option *ngFor="let dominio of yesOrNo; let indexYesOrNo = index;" [value]="dominio.value">
-                                {{ dominio.viewValue }}
-                            </mat-option>
-                        </ng-container>
-                    </mat-select>
                 </mat-form-field>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
+    <section class="mt-5">
+        <h5>Detalhe da Empresa</h5>
+        <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="15px grid">
+            <mat-form-field *ngIf="getField(['name']) as field">
+                <mat-label>Nome</mat-label>
+                <input matInput placeholder="Nome" [formControlName]="'name'" />
+                <mat-error *ngIf="field.isFieldValid">
+                    <span *ngIf="field.abstractControl!.hasError('required')">
+                        Nome is required
+                    </span>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field *ngIf="getField(['business']) as field" fxFlex="15" fxFlex.xs="100">
+                <mat-label>Business</mat-label>
+                <input matInput placeholder="Business" [formControlName]="'business'" />
+                <mat-error *ngIf="field.isFieldValid">
+                    <span *ngIf="field.abstractControl!.hasError('required')">
+                        Business is required
+                    </span>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field *ngIf="getField(['valuation']) as field" fxFlex="15" fxFlex.xs="100">
+                <mat-label>Valuation</mat-label>
+                <input matInput mask="separator.2" thousandSeparator="," placeholder="Valuation" [formControlName]="'valuation'" />
+
+                <span matPrefix>&nbsp;&nbsp;{{ currencySymbol$ | async }}</span >
+
+                <mat-error *ngIf="field.isFieldValid">
+                    <span *ngIf="field.abstractControl!.hasError('required')">Valuation is required</span>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field *ngIf="getField(['cnpj']) as field" fxFlex="15" fxFlex.xs="100">
+                <mat-label>CNPJ</mat-label>
+                <input matInput placeholder="CNPJ" mask="CPF_CNPJ" [formControlName]="'cnpj'" />
+                <mat-error *ngIf="field.isFieldValid">
+                    <span *ngIf="field.abstractControl!.hasError('required')">CNPJ is required</span>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field *ngIf="getField(['active']) as field" fxFlex="15" fxFlex.xs="100">
+                <mat-label>Ativo?</mat-label>
+                <mat-select [formControlName]="'active'">
+                    <ng-container *ngIf="(dominioYesOrNo$ | async) as yesOrNo">
+                        <mat-option *ngFor="let dominio of yesOrNo; let indexYesOrNo = index;" [value]="dominio.value">
+                            {{ dominio.viewValue }}
+                        </mat-option>
+                    </ng-container>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </section>
 
     <div fxLayout fxLayoutGap="15px">
         <button type="button" mat-raised-button color="basic" (click)="backButton();">
@@ -133,7 +156,7 @@
             type="submit"
             mat-raised-button
             color="warn"
-            [disabled]="f.invalid || (loading$ | async) === true"
+            [disabled]="f.invalid || (loading$ | async) === true || locationCep.pending"
         >
             {{ business?.id ? 'Salvar' : 'Criar' }}
             <mat-icon *ngIf="(loading$ | async) === true">
