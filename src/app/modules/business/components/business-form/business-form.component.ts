@@ -99,7 +99,11 @@ export class BusinessFormComponent implements OnInit, OnChanges {
             "active": ['', [Validators.required]],
             "cnpj": ['', [Validators.required]],
             "location": this.formBuilder.group({
-                "cep": ['', [Validators.required]],
+                "cep": ['', [
+                    Validators.required,
+                    Validators.minLength(8),
+                    Validators.maxLength(10)
+                ]],
                 "state": ['', [Validators.required]],
                 "city": ['', [Validators.required]],
                 "street": ['', [Validators.required]],

@@ -18,11 +18,11 @@ import {
 import {
     catchError,
     debounceTime,
-    delay,
     distinctUntilChanged,
     map,
     switchMap
 } from 'rxjs/operators';
+import { UtilService } from '../../../../shared/services/utils/util.service';
 import { ICep } from '../../interfaces/cep.interface';
 import { CepService } from '../../services/cep.service';
 
@@ -43,6 +43,7 @@ import { CepService } from '../../services/cep.service';
 })
 export class CepDirective implements AsyncValidator {
     private cepService = inject(CepService);
+    private utilService = inject(UtilService);
 
     @Output() public cepChange: EventEmitter<ICep | null> = new EventEmitter();
 
@@ -54,7 +55,7 @@ export class CepDirective implements AsyncValidator {
         if (!control.value) return of(null);
 
         return of(control.value).pipe(
-            map(cepNumber => cepNumber.replace(/\D/g, "")),
+            map(cepNumber => this.utilService.extractJustNumbers(cepNumber || '')),
             distinctUntilChanged(),
             debounceTime(500),
             switchMap(cepNumber => {
