@@ -1,31 +1,37 @@
-<header class="header">
+<nav class="menu fixed">
     <div class="logo">
-      <img src="https://logodownload.org/wp-content/uploads/2019/12/itau-bba-logo.png" alt="Itau BBA Logo">
+        <img src="https://logodownload.org/wp-content/uploads/2019/12/itau-bba-logo.png" alt="Itau BBA Logo">
     </div>
-    <div class="spacer"></div>
-    <div class="user-profile">
-        <div class="language">
-            <button mat-button [matMenuTriggerFor]="languageMenu">{{ language$ | async }}</button>
-        </div>
-
-        <div class="divider"></div>
-
-        <button mat-button [matMenuTriggerFor]="profileMenu">
-            <div class="dropdown-container">
-                <div class="dropdown-trigger">
-                    <div class="circle"></div>
-                    <div class="user-info">
-                        <span class="user-name">John Doe</span>
-                        <span class="user-role">Diretor Itaú BBA</span>
-                    </div>
-                    <div class="caret">
-                        <i class="fa-solid fa-angle-down"></i>
-                    </div>
+    <div class="menu-content">
+        <div class="menu-item">
+            <div class="spacer"></div>
+            <div class="user-profile">
+                <div class="language">
+                    <button mat-button [matMenuTriggerFor]="languageMenu">{{ language$ | async }}</button>
                 </div>
-            </div>
-        </button>
-    </div>
 
+                <div class="divider"></div>
+
+                <button mat-button [matMenuTriggerFor]="profileMenu">
+                    <div class="dropdown-container">
+                        <div class="dropdown-trigger">
+                            <div class="circle"></div>
+                            <div class="user-info">
+                                <span class="user-name">John Doe</span>
+                                <span class="user-role">Diretor Itaú BBA</span>
+                            </div>
+                            <div class="caret">
+                                <i class="fa-solid fa-angle-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
     <mat-menu #profileMenu="matMenu">
         <button mat-menu-item><i class="fa-solid fa-gear"></i> Settings</button>
         <button mat-menu-item><i class="fa-solid fa-power-off"></i> Log out</button>
@@ -33,12 +39,9 @@
     <mat-menu #languageMenu="matMenu">
         <ng-container *ngIf="(languages$ | async) as languages">
             <ng-container *ngFor="let language of languages; let indexLanguage = index;">
-                <button mat-menu-item (click)="onSelectedLanguage(language)"><i class="fa-solid fa-language"></i> {{ language }}</button>
+                <button mat-menu-item (click)="onSelectedLanguage(language)"><i class="fa-solid fa-language"></i> {{
+                    language }}</button>
             </ng-container>
         </ng-container>
     </mat-menu>
-</header>
-
-
-
-
+</nav>
